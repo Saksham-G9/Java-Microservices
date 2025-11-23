@@ -1,11 +1,14 @@
 package com.app.ecomm_application.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.app.ecomm_application.dto.UserRequestDto;
+import com.app.ecomm_application.dto.UserResponseDto;
+import com.app.ecomm_application.mapper.UserMapper;
 import com.app.ecomm_application.model.User;
 import com.app.ecomm_application.repo.UserRepository;
 
@@ -16,30 +19,41 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponseDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<User> createUser(User user) {
-        user.setId(null); // Ensure ID is null for new entities
+    public Optional<UserResponseDto> createUser(UserRequestDto dto) {
+        User user = userMapper.toEntity(dto);
+        user.setId(null);
         User savedUser = userRepository.save(user);
-        return Optional.of(savedUser);
+        return Optional.of(userMapper.toDto(savedUser));
     }
 
-    public Optional<User> getUser(Long id) {
-
-        return userRepository.findById(id);
+    public Optional<UserResponseDto> getUser(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return userRepository.findById(id).map(userMapper::toDto);
     }
 
     public void deleteUser(Long id) {
-
-        userRepository.deleteById(id);
-
+        if (id != null) {
+            userRepository.deleteById(id);
+        }
     }
 
-    public Optional<User> updateUser(Long id, User user) {
+    public Optional<UserResponseDto> updateUser(Long id, UserRequestDto dto) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        User user = userMapper.toEntity(dto);
         user.setId(id);
-        return createUser(user);
+        User savedUser = userRepository.save(user);
+        return Optional.of(userMapper.toDto(savedUser));
     }
 }
