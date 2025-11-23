@@ -14,14 +14,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private List<User> userList = new ArrayList<>();
-
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     public Optional<User> createUser(User user) {
-        user.setId(userList.size() + 1L);
 
         userRepository.save(user);
 
