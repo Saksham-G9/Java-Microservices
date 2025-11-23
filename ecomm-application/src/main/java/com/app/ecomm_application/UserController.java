@@ -40,15 +40,15 @@ public class UserController {
     }
 
     @PutMapping("/api/users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user){
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         return userService.updateUser(id, user).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
     @DeleteMapping("/api/users/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable Long id) {
-        return userService.deleteUser(id).map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.internalServerError().build());
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok("User is deleted");
+
     }
 }
