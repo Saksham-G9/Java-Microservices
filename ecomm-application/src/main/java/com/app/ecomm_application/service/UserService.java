@@ -1,10 +1,13 @@
-package com.app.ecomm_application;
+package com.app.ecomm_application.service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+
+import com.app.ecomm_application.model.User;
+import com.app.ecomm_application.repo.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,11 +22,9 @@ public class UserService {
     }
 
     public Optional<User> createUser(User user) {
-
-        userRepository.save(user);
-
-        // userList.add(user);
-        return getUser(user.getId());
+        user.setId(null); // Ensure ID is null for new entities
+        User savedUser = userRepository.save(user);
+        return Optional.of(savedUser);
     }
 
     public Optional<User> getUser(Long id) {

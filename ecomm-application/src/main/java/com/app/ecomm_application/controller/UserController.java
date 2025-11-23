@@ -1,4 +1,4 @@
-package com.app.ecomm_application;
+package com.app.ecomm_application.controller;
 
 import java.util.List;
 
@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.app.ecomm_application.model.User;
+import com.app.ecomm_application.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "User Management", description = "APIs for managing users")
 public class UserController {
 
     private final UserService userService;
