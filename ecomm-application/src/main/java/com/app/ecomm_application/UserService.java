@@ -15,6 +15,7 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        user.setId(userList.size() + 1L);
         userList.add(user);
         return user;
     }

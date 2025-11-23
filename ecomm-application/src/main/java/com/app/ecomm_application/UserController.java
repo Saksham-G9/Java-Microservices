@@ -2,6 +2,9 @@ package com.app.ecomm_application;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,17 +23,34 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("api/users")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/api/users/{id}")
+    public ResponseEntity<User> getUser(@PathVariable int id) {
+        User user = userService.getUser(id);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/api/users")
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
+
+        return ResponseEntity.ok(createdUser);
     }
 
     @DeleteMapping("/api/users/{id}")
-    public User deleteUser(@PathVariable int id) {
-        return userService.deleteUser(id);
+    public ResponseEntity<User> deleteUser(@PathVariable int id) {
+        User user = userService.deleteUser(id);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
     }
 }
