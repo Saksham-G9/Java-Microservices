@@ -2,13 +2,12 @@ package com.app.ecomm_application;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,29 +27,28 @@ public class UserController {
     }
 
     @GetMapping("/api/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable int id) {
-        User user = userService.getUser(id);
-
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        return userService.getUser(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/api/users")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-
-        return ResponseEntity.ok(createdUser);
+        return userService.createUser(user).map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.internalServerError().build());
     }
 
-    @DeleteMapping("/api/users/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable int id) {
-        User user = userService.deleteUser(id);
+    @PutMapping("/api/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user){
+        return userService.updateUser(id, user).map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
+
+    @DeleteMapping("/api/users/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable Long id) {
+        return userService.deleteUser(id).map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.internalServerError().build());
     }
 }
