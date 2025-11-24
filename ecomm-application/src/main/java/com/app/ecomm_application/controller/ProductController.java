@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.ecomm_application.dto.ProductRequestDto;
@@ -32,6 +33,11 @@ public class ProductController {
     @GetMapping("/api/products")
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping("/api/products/search")
+    public ResponseEntity<List<ProductResponseDto>> searchProducts(@RequestParam String keyword) {
+        return ResponseEntity.ok(productService.searchProducts(keyword));
     }
 
     @GetMapping("/api/products/{id}")

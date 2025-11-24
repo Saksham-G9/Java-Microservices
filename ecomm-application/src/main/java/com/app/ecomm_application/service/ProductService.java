@@ -59,5 +59,12 @@ public class ProductService {
         }
     }
 
+    public List<ProductResponseDto> searchProducts(String keyword) {
+        List<Product> products = productRepository
+                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrCategoryContainingIgnoreCase(keyword,
+                        keyword, keyword);
+        return products.stream().map(productMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
 }
