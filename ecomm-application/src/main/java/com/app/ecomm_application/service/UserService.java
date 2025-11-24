@@ -29,7 +29,6 @@ public class UserService {
 
     public Optional<UserResponseDto> createUser(UserRequestDto dto) {
         User user = userMapper.toEntity(dto);
-        user.setId(null);
         User savedUser = userRepository.save(user);
         return Optional.of(userMapper.toDto(savedUser));
     }
@@ -51,9 +50,13 @@ public class UserService {
         if (id == null) {
             return Optional.empty();
         }
-        User user = userMapper.toEntity(dto);
-        user.setId(id);
-        User savedUser = userRepository.save(user);
-        return Optional.of(userMapper.toDto(savedUser));
+        Optional<User> existingUser = userRepository.findById(id);
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            userMapper.updateUserFromDto(dto, user);
+            User savedUser = userRepository.save(user);
+            return Optional.of(userMapper.toDto(savedUser));
+        }
+        return Optional.empty();
     }
 }

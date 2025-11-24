@@ -2,6 +2,7 @@ package com.app.ecomm_application.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
 import com.app.ecomm_application.dto.AddressRequestDto;
@@ -18,6 +19,11 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     User toEntity(UserRequestDto dto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    void updateUserFromDto(UserRequestDto dto, @MappingTarget User user);
 
     UserResponseDto toDto(User user);
 
