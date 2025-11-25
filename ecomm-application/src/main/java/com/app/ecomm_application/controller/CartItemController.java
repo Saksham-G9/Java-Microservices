@@ -2,7 +2,9 @@ package com.app.ecomm_application.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,4 +44,14 @@ public class CartItemController {
             @RequestHeader("X-User-ID") Long userId) {
         return ResponseEntity.ok(cartItemService.getCart(userId));
     }
+
+    @DeleteMapping("/remove-product/{productId}/quantity/{quantity}")
+    public ResponseEntity<Void> removeProductFromCart(
+            @RequestHeader("X-User-ID") Long userId,
+            @PathVariable Long productId,
+            @PathVariable int quantity) {
+        cartItemService.removeItemFromCart(userId, productId, quantity);
+        return ResponseEntity.ok().build();
+    }
+
 }

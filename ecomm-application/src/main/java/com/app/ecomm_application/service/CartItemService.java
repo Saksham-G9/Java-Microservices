@@ -14,6 +14,7 @@ import com.app.ecomm_application.repo.CartItemRepo;
 import com.app.ecomm_application.repo.ProductRepo;
 import com.app.ecomm_application.repo.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -64,6 +65,39 @@ public class CartItemService {
         return cartItemRepo.findByUser(user)
                 .map(cartItemMapper::toResponseDto)
                 .orElse(null);
+    }
+
+    @Transactional
+    public void removeItemFromCart(Long userId, Long productId, int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity to remove must be greater than zero");
+        }
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        CartItem cartItem = cartItemRepo.findByUserAndProduct(user, product)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        if (cartItem.getQuantity() < quantity) {
+            throw new IllegalArgumentException("Insufficient quantity in cart to remove");
+        }
+
+        // restore stock
+        product.setStockQuantity(product.getStockQuantity() + quantity);
+        productRepo.save(product);
+
+        int newQty = cartItem.getQuantity() - quantity;
+        if (newQty <= 0) {
+            cartItemRepo.delete(cartItem);
+        } else {
+            cartItem.setQuantity(newQty);
+            cartItem.setPrice(calculatePrice(newQty, product.getPrice()));
+            cartItemRepo.save(cartItem);
+        }
     }
 
     private static BigDecimal calculatePrice(int quantity, BigDecimal unitPrice) {
