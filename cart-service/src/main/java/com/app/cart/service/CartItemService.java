@@ -68,7 +68,7 @@ public class CartItemService {
             CartItem cartItem = optionalCartItem.get();
             cartItem.setQuantity(cartItemRequestDto.getQuantity());
             cartItem.setPrice(cartItemRequestDto.getPrice());
-            
+
             CartItem updatedItem = cartItemRepository.save(cartItem);
             return cartItemMapper.toDto(updatedItem);
         }

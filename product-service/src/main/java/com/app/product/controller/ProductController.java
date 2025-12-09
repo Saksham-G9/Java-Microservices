@@ -17,12 +17,15 @@ import com.app.product.dto.ProductDto;
 import com.app.product.dto.ProductRequestDto;
 import com.app.product.service.ProductService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/products")
+@RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    
+    private final ProductService productService;
 
     @PostMapping
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductRequestDto productRequestDto) {
