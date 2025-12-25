@@ -1,2 +1,5 @@
 Ecommerce Microservices
 *.db
+/target
+**/target/classes/
+

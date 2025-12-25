@@ -4,25 +4,55 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.app.cart.clients.restclient.ProductServiceClient;
+import com.app.cart.clients.restclient.UserServiceClient;
 import com.app.cart.dto.CartItemDto;
 import com.app.cart.dto.CartItemRequestDto;
+import com.app.cart.dto.ProductDto;
 import com.app.cart.entity.CartItem;
 import com.app.cart.mapper.CartItemMapper;
 import com.app.cart.repository.CartItemRepository;
+import com.app.cart.dto.UserDto;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class CartItemService {
 
-    @Autowired
-    private CartItemRepository cartItemRepository;
+    private final CartItemRepository cartItemRepository;
 
-    @Autowired
-    private CartItemMapper cartItemMapper;
+    private final CartItemMapper cartItemMapper;
 
-    public CartItemDto addItemToCart(CartItemRequestDto cartItemRequestDto) {
+    private final ProductServiceClient productService;
+    private final UserServiceClient userService;
+
+    public boolean addItemToCart(CartItemRequestDto cartItemRequestDto) {
+
+        ResponseEntity<UserDto> userResponse = userService.getUserById(cartItemRequestDto.getUserId()); 
+        
+        ResponseEntity<ProductDto> productResponse = productService
+        .getProductById(cartItemRequestDto.getProductId());
+        
+        
+        // Check user existence via UserService
+        if (userResponse == null || !userResponse.getStatusCode().is2xxSuccessful()) {
+            return false;
+        }
+        
+        // Check product availability via ProductService
+        if (productResponse == null || !productResponse.getStatusCode().is2xxSuccessful()) {
+            return false;
+        }
+
+        ProductDto product = productResponse.getBody();
+        if (product == null || product.getQuantity() < cartItemRequestDto.getQuantity()) {
+            return false;
+        }
+
         // Check if item already exists in cart
         List<CartItem> existingItems = cartItemRepository.findByUserId(cartItemRequestDto.getUserId());
         Optional<CartItem> existingItem = existingItems.stream()
@@ -43,8 +73,8 @@ public class CartItemService {
             cartItem.setPrice(cartItemRequestDto.getPrice());
         }
 
-        CartItem savedItem = cartItemRepository.save(cartItem);
-        return cartItemMapper.toDto(savedItem);
+        cartItemRepository.save(cartItem);
+        return true;
     }
 
     public CartItemDto getCartItemById(Long id) {

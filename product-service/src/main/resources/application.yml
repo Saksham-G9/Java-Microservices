@@ -2,7 +2,7 @@ spring:
   application:
     name: product-service
   datasource:
-    url: jdbc:mysql://localhost:3306/product_service_db?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/product_service_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver

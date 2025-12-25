@@ -1,6 +1,5 @@
 package com.app.cart.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,15 +8,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDto {
+public class UserDto {
     private Long id;
-    private String productName;
-    private String description;
-    private BigDecimal price;
-    private Integer quantity;
-    private String category;
-    private String imageUrl;
-    private Boolean isActive;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private String userRole;
+    private AddressDto address;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

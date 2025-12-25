@@ -13,21 +13,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 import com.app.cart.dto.CartItemDto;
 import com.app.cart.dto.CartItemRequestDto;
 import com.app.cart.service.CartItemService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/cart")
+@RequiredArgsConstructor
 public class CartItemController {
 
-    @Autowired
-    private CartItemService cartItemService;
+    private final CartItemService cartItemService;
 
     @PostMapping("/add")
-    public ResponseEntity<CartItemDto> addItemToCart(@RequestBody CartItemRequestDto cartItemRequestDto) {
-        CartItemDto cartItemDto = cartItemService.addItemToCart(cartItemRequestDto);
-        return new ResponseEntity<>(cartItemDto, HttpStatus.CREATED);
+    public ResponseEntity<String> addItemToCart(@Valid @RequestBody CartItemRequestDto cartItemRequestDto) {
+        boolean added = cartItemService.addItemToCart(cartItemRequestDto);
+        if (added) {
+            return new ResponseEntity<>("Item added to cart successfully", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("Failed to add item to cart", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}")
@@ -46,7 +53,8 @@ public class CartItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CartItemDto> updateCartItem(@PathVariable Long id, @RequestBody CartItemRequestDto cartItemRequestDto) {
+    public ResponseEntity<CartItemDto> updateCartItem(@PathVariable Long id,
+            @Valid @RequestBody CartItemRequestDto cartItemRequestDto) {
         CartItemDto cartItemDto = cartItemService.updateCartItem(id, cartItemRequestDto);
         if (cartItemDto != null) {
             return new ResponseEntity<>(cartItemDto, HttpStatus.OK);
