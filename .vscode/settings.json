@@ -1,3 +1,7 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "yaml.schemas": {
+        "https://www.schemastore.org/yamllint.json": "file:///c%3A/Users/nrwy8446/Downloads/PProj/Java/Java-Microservices/eureka/src/main/resources/application.yml"
+    },
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
